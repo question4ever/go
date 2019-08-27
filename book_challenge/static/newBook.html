@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta http-equiv="X-UA-Compatible" content="ie-edge">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+        <script>
+                function bookSearch()
+                {
+                    var input = document.getElementById("myinput").value; 
+
+                    $.ajax({
+                    url: "https://www.googleapis.com/books/v1/volumes?q=" + input,
+                    type: 'GET',
+                    dataType: 'json', // added data type
+                    success: handleResponse
+                    });
+                }
+        </script>
+        <title>Book Challenge - Add Book</title>
+    </head>
+    <body>
+        <form action="/addbook" method="POST">
+            <label>Title</label>
+            <input type="text" name="title">
+            <label>Author</label>
+            <input type="text" name="author">
+            <label>Page Count</label>
+            <input type="number" name="pageCount">
+            <input type="text" name="thumbnail" hidden="true">
+            <input type="submit" value="Add Book">
+        </form>
+    </body>
+</html>
