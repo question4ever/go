@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta http-equiv="X-UA-Compatible" content="ie-edge">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+        <script>
+                function bookSearch()
+                {
+                    var title = document.getElementById("title").value; 
+                    var author = document.getElementById("author").value;
+
+                    $.ajax({
+                    url: "https://www.googleapis.com/books/v1/volumes?q=" + title + "+" + author,
+                    type: 'GET',
+                    dataType: 'json', // added data type
+                    success: handleResponse
+                    });
+                }
+                function handleResponse(res) 
+			    {
+                    var thumb = res.items[0].volumeInfo.imageLinks.thumbnail;
+                    var pageCount = res.items[0].volumeInfo.pageCount;
+                    $('#result').html(function(n){
+                        return '<img src=' + thumb +  ' alt="" /> </a>';
+                    });
+                    $('#thumbsrc').val(thumb);
+                    $('#pageCount').val(pageCount)
+  			    }
+        </script>
+        <title>Book Challenge - Add Book</title>
+    </head>
+    <body>
+        <form action="/library/add" method="POST">
+            <label>Title</label>
+            <input type="text" name="title" id="title">
+            <label>Author</label>
+            <input type="text" name="author" id="author">
+            <label>Page Count</label>
+            <input type="number" name="pageCount" id="pageCount">
+            <br><br><br>
+            <input type="text" id="thumbsrc" name="thumbnail" >
+            <button type="button" onclick="bookSearch()">Find Book</button>
+            <input type="submit" value="Add Book">
+        </form>
+        <div id="result"></div>
+    </body>
+</html>
