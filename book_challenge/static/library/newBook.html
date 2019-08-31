@@ -22,11 +22,15 @@
 			    {
                     var thumb = res.items[0].volumeInfo.imageLinks.thumbnail;
                     var pageCount = res.items[0].volumeInfo.pageCount;
+                    var title = res.items[0].volumeInfo.title;
+                    var author = res.items[0].volumeInfo.authors[0];
                     $('#result').html(function(n){
                         return '<img src=' + thumb +  ' alt="" /> </a>';
                     });
+                    $('#title').val(title);
+                    $('#author').val(author);
                     $('#thumbsrc').val(thumb);
-                    $('#pageCount').val(pageCount)
+                    $('#pageCount').val(pageCount);
   			    }
         </script>
         <title>Book Challenge - Add Book</title>

@@ -60,6 +60,7 @@ func GetBooks() []Book {
 		}
 		book := Book{b[0], b[1], pc, b[3]}
 		books = append(books, book)
+		fmt.Println(b[0])
 	}
 	return books
 }

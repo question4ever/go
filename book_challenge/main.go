@@ -3,11 +3,8 @@ package main
 import (
 	"bytes"
 	"fmt"
-	"io/ioutil"
 	"log"
-	"os"
 	"strconv"
-	"strings"
 
 	"book_challenge/models"
 	"net/http"
@@ -19,46 +16,41 @@ func Home(w http.ResponseWriter, r *http.Request) {
 	http.ServeFile(w, r, "static\\index.html")
 }
 
-func UpdateIndex() {
+func UpdateIndex() string {
 
 	books := models.GetBooks()
 
-	path := "static\\library\\index.html"
 	var buffer bytes.Buffer
 	buffer.WriteString("<table><tr><th>Title</th><th>Author</th><th>Page Count</th></tr>")
 
-	for _, b := range books {
-		s := fmt.Sprintf("<tr><td>%s</td><td>%s</td><td>%d</td></tr>", b.Title, b.Author, b.PageCount)
+	for i, b := range books {
+		s := fmt.Sprintf("<tr><td>%s</td><a><td>%s</td><td>%d</td><td><a href=\"http://localhost:8000/library/edit/%d\">edit</a></td></tr>", b.Title, b.Author, b.PageCount, i)
 		buffer.WriteString(s)
 	}
 	buffer.WriteString("</table>")
 
-	file, err := ioutil.ReadFile(path)
-	if err != nil {
-		panic(err)
-	}
-
-	info, _ := os.Stat(path)
-	mode := info.Mode()
-
-	array := strings.Split(string(file), "\n")
-	fmt.Print(array)
-	for i, line := range array {
-		if line == "" {
-			array[i] = buffer.String()
-		}
-	}
-
-	ioutil.WriteFile(path, []byte(strings.Join(array, "\n")), mode)
+	return buffer.String()
 }
 
 func Library(w http.ResponseWriter, r *http.Request) {
-	UpdateIndex()
-	http.ServeFile(w, r, "static\\library\\index.html")
+	out := UpdateIndex()
+	fmt.Fprint(w, out)
 }
 
 func EditBook(w http.ResponseWriter, r *http.Request) {
-
+	if r.Method == "GET" {
+		index := mux.Vars(r)["id"]
+		books := models.GetBooks()
+		i, err := strconv.Atoi(index)
+		if err != nil {
+			log.Fatal(err)
+		}
+		if i < len(books) {
+			b := books[i]
+			fmt.Print(b.Title)
+			fmt.Fprintf(w, "<p>%s</p><p>%s</p><p>%d</p><img src=\"%s\">", b.Title, b.Author, b.PageCount, b.Thumbnail)
+		}
+	}
 }
 
 func ReadBook(w http.ResponseWriter, r *http.Request) {
@@ -80,6 +72,7 @@ func AddBook(w http.ResponseWriter, r *http.Request) {
 		if err == nil {
 			var b = models.CreateBook(r.FormValue("title"), r.FormValue("author"), i, r.FormValue("thumbnail"))
 			fmt.Printf("Title: %s\nAuthor: %s\nPage Count: %d\n", b.Title, b.Author, b.PageCount)
+			fmt.Fprintf(w, "<h2>%s addded to library!</h2>", b.Title)
 		}
 	}
 }
@@ -88,10 +81,11 @@ func main() {
 	//router.PathPrefix("/bc/").Handler(http.StripPrefix("/bc/", http.FileServer(http.Dir(dir))))
 	r := mux.NewRouter()
 	r.HandleFunc("/", Home)
-	r.HandleFunc("/library/", Library)      //Needs to parse books.sav and popluate a table/list of books
-	r.HandleFunc("/library/edit", EditBook) //Allow the library to be edited
+	r.HandleFunc("/library/", Library) //Needs to parse books.sav and popluate a table/list of books
+	//r.HandleFunc("/library/edit", EditBook) //Allow the library to be edited
 	r.HandleFunc("/library/read", ReadBook) //Update pages read on a book
 	r.HandleFunc("/library/add", AddBook)
+	r.Path("/library/edit/{id}").HandlerFunc(EditBook)
 
 	log.Fatal(http.ListenAndServe(":8000", r))
 }
