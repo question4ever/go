@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie-edge">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script>
+        function loadForm(){
+            let points = parseInt(document.getElementById("points").innerHTML);
+            if(points > 100){
+                $('#0').removeAttr("disabled")
+            }
+        }
+    </script>
+</head>
+<body>
+    <form action="/points/spend" method="POST" onload="loadForm()">
+        <ul>
+            <li ><label>Slurpee costs 100 points</label>
+            <input id="0" disabled="" type="checkbox" name="prize" value="Slurpee"></li>
+            <li ><label>Move Night costs 200 points</label>
+            <input id="1" disabled=""  type="checkbox" name="prize" value="Movie Night"></li>
+            <li ><label>Small Toy costs 1000 points</label>
+            <input id="2" disabled="" type="checkbox" name="prize" value="Small Toy"></li>
+            <li ><label>Switch Game costs 5000 points</label>
+            <input id="3" disabled="" type="checkbox" name="prize" value="Switch Game"></li>
+        </ul>
+        <button type="submit">Submit</button>
+    </form>
+</body>
+
+</html>
