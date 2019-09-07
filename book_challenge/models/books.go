@@ -38,6 +38,7 @@ func CreateBook(title string, author string, pageCount int, thumbnail string) *B
 	if _, err := f.WriteString(s); err != nil {
 		log.Fatal(err)
 	}
+	f.Close()
 	return &b
 }
 
@@ -71,6 +72,26 @@ func GetBooks() []Book {
 	return books
 }
 
+func DeleteBook(index int) {
+	books := GetBooks()
+	e := os.Remove("books.sav")
+	if e != nil {
+		log.Fatal(e)
+	}
+	f, err := os.OpenFile("books.sav", os.O_CREATE|os.O_WRONLY, 0644)
+	var s string
+	if err != nil {
+		log.Fatal(err)
+	}
+	for j, book := range books {
+		if index != j {
+			s = fmt.Sprintf("%s*%s*%d*%d*%s", book.Title, book.Author, book.PageCount, book.PagesRead, book.Thumbnail)
+			f.WriteString(s)
+		}
+	}
+	f.Close()
+}
+
 func SaveBook(index int, b Book) {
 	books := GetBooks()
 	books[index] = b
@@ -82,7 +103,7 @@ func SaveBook(index int, b Book) {
 	}
 	for _, book := range books {
 		s = fmt.Sprintf("%s*%s*%d*%d*%s", book.Title, book.Author, book.PageCount, book.PagesRead, book.Thumbnail)
-		fmt.Print(s)
 		f.WriteString(s)
 	}
+	f.Close()
 }
