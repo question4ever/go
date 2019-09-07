@@ -24,6 +24,11 @@
 #   go-tests = true
 #   unused-packages = true
 
+[metadata.heroku]
+  root-package = "github.com/src/go/book_challenge"
+  go-version = "1.12.4"
+  install = [ "./..." ]
+
 
 [[constraint]]
   name = "github.com/gorilla/mux"
