@@ -7,7 +7,7 @@ import (
 	"log"
 	"net/http"
 	"strconv"
-
+	"os"
 	"github.com/gorilla/mux"
 )
 
@@ -187,5 +187,9 @@ func main() {
 	r.HandleFunc("/points/spend", SpendPoints)
 	r.Path("/library/delete/{id}").HandlerFunc(DeleteBook)
 
-	log.Fatal(http.ListenAndServe(":8000", r))
+	port := os.Getenv("PORT")
+	if port == "" {
+  		port = "8080"
+	}
+	log.Fatal(http.ListenAndServe(":"+port, r))
 }
